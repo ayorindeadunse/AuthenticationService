@@ -15,6 +15,7 @@ namespace AuthenticationService.Data.Repositories
 
         public async Task CreateUserAsync(User user, string password)
         {
+            //might need to pass a DTO and not the full user object...
             await _userManager.CreateAsync(user, password);
         }
 
