@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuthenticationService.Data.Context
 {
-	public class ApplicationDbContext : IdentityDbContext<User>
+	public class AuthDbContext : IdentityDbContext<User>
 	{
-		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
+		public AuthDbContext(DbContextOptions<AuthDbContext> options): base(options)
 		{
 
 		}

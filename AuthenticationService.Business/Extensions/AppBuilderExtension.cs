@@ -10,10 +10,10 @@ namespace AuthenticationService.Business.Extensions
     {
         public static void SetupMigrations(IServiceProvider service)
         {
-            var logger = service.GetService<ILogger<ApplicationDbContext>>();
+            var logger = service.GetService<ILogger<AuthDbContext>>();
             try
             {
-                var context = service.GetService<ApplicationDbContext>();
+                var context = service.GetService<AuthDbContext>();
                 context?.Database.Migrate();
             }
             catch (Exception ex)
