@@ -11,11 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<AuthDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("AuthenticationConnection")));
 
 builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<AuthDbContext>();
 
 // Add Repositories DI information
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -45,7 +45,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<ApplicationDbContext>>();
+    var logger = services.GetRequiredService<ILogger<AuthDbContext>>();
 
     try
     {
