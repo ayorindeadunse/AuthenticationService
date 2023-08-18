@@ -1,9 +1,11 @@
-﻿using AuthenticationService.Business.Services;
+﻿using AuthenticationService.Business.Extensions;
+using AuthenticationService.Business.Services;
 using AuthenticationService.Data.Context;
 using AuthenticationService.Data.Entities;
 using AuthenticationService.Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,8 +38,24 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.MapControllers();
+
+// Automatically setup migrations
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<ApplicationDbContext>>();
+
+    try
+    {
+        AppBuilderExtension.SetupMigrations(services);
+    }
+    catch(Exception ex)
+    {
+        logger.LogError(ex, ex.Message);
+    }
+}
 
 app.Run();
 
