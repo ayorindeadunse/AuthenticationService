@@ -7,6 +7,7 @@ namespace AuthenticationService.Data.Repositories
 	{
 		Task CreateUserAsync(User user, string password);
 		Task<User> GetUserByUsernameAsync(string username);
+		User FindByExternalProviderAsync(string provider, string providerKey);
 		// Register user
 	}
 }
