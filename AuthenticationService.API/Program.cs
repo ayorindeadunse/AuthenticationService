@@ -1,5 +1,6 @@
 ﻿using AuthenticationService.Business.Extensions;
 using AuthenticationService.Business.Services;
+using AuthenticationService.Business.Services.Abstract;
 using AuthenticationService.Data.Context;
 using AuthenticationService.Data.Entities;
 using AuthenticationService.Data.Repositories;
@@ -20,6 +21,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
 // Add Repositories DI information
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

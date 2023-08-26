@@ -22,6 +22,11 @@ namespace AuthenticationService.Data.Repositories
         {
             return await _userManager.FindByNameAsync(username); // review
         }
+
+        public User FindByExternalProviderAsync(string provider, string providerKey)
+        {
+            return _userManager.Users.FirstOrDefault(u => u.ExternalLoginProvider == provider && u.ExternalLoginProviderKey == providerKey);
+        }
     }
 }
 
