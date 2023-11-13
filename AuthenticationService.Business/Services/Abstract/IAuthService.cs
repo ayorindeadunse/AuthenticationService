@@ -7,7 +7,7 @@ namespace AuthenticationService.Business.Services
 	public interface IAuthService
 	{
 		Task<ResponseWrapper<string>> RegisterUserAsync(RegisterDTO registerDTO);
-		Task<bool> LoginUserAsync(LoginDTO loginDTO);
+		Task<ResponseWrapper<string>> LoginUserAsync(LoginDTO loginDTO);
 		ResponseWrapper<string> SocialLoginAsync(string provider, string providerToken);
 	}
 }

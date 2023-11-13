@@ -30,15 +30,28 @@ namespace AuthenticationService.Business.Services
 			try
 			{
 				var user = new User { UserName = registerDTO.Username, Email = registerDTO.Email };
-				var result = await _userManager.CreateAsync(user, registerDTO.Password);
+				var result = await _userRepository.CreateUserAsync(user, registerDTO.Password);
 				// generate user token and send in body of response
 
-				return new ResponseWrapper<string>
+				if (result.Succeeded)
 				{
-					IsRequestSuccessful = true,
-					Data = "token" // placeholder
-				};
-			}
+					var token = GenerateJwtToken(user);
+					return new ResponseWrapper<string>
+					{
+						IsRequestSuccessful = true,
+						Data = token
+					};
+				}
+
+                return new ResponseWrapper<string>
+                {
+                    IsRequestSuccessful = false,
+                    Errors = new[]
+                    {
+                        "Registration failed"
+                    }
+                };
+            }
 			catch(Exception ex)
 			{
 				// log exception
@@ -56,10 +69,29 @@ namespace AuthenticationService.Business.Services
 		}
 
 		// refactor this to send a user token to user
-		public async Task<bool> LoginUserAsync(LoginDTO loginDTO)
+		public async Task<ResponseWrapper<string>> LoginUserAsync(LoginDTO loginDTO)
 		{
 			var result = await _signInManager.PasswordSignInAsync(loginDTO.Username, loginDTO.Password, false, lockoutOnFailure: false);
-			return result.Succeeded; // again, consider sending a bearer token as above and as a result refactor and reassess the current logic.
+			if (result.Succeeded)
+			{
+				var user = await _userManager.FindByNameAsync(loginDTO.Username);
+				// Generate token
+				var token = GenerateJwtToken(user);
+				return new ResponseWrapper<string>
+				{
+					IsRequestSuccessful = true,
+					Data = token
+				};
+			}
+
+			return new ResponseWrapper<string>
+			{
+				IsRequestSuccessful = false,
+				Errors = new[]
+				{
+					"Login failed"
+				}
+			};
 		}
 
         public ResponseWrapper<string> SocialLoginAsync(string provider, string providerToken)
@@ -84,15 +116,13 @@ namespace AuthenticationService.Business.Services
 				_signInManager.SignInAsync(user, isPersistent: false);
 
 				// Generate token
-				var token = _jwtService.GenerateJwtToken(user);
+				var token = GenerateJwtToken(user);
 				return new ResponseWrapper<string>
 				{
 					IsRequestSuccessful = true,
-					Token = token
+					Data = token
 				};
 			}
-            else
-            {
                 // Send error message that registration is required or to contact support.
 
                 return new ResponseWrapper<string>
@@ -103,8 +133,17 @@ namespace AuthenticationService.Business.Services
 
 					}			
 				};
-            }
+            
         }
+
+
+        private string GenerateJwtToken(User user)
+        {
+            // Generate JWT token using _jwtService
+            var token = _jwtService.GenerateJwtToken(user);
+            return token;
+        }
+
     }
 }
 

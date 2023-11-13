@@ -13,9 +13,9 @@ namespace AuthenticationService.Data.Repositories
             _userManager = userManager;
         }
 
-        public async Task CreateUserAsync(User user, string password)
+        public async Task<IdentityResult> CreateUserAsync(User user, string password)
         {
-            await _userManager.CreateAsync(user, password);
+            return await _userManager.CreateAsync(user, password);
         }
 
         public async Task<User> GetUserByUsernameAsync(string username)
