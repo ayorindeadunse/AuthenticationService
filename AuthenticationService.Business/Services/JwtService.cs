@@ -28,7 +28,7 @@ namespace AuthenticationService.Business.Services
 			{
 				Subject = new ClaimsIdentity(new[]
 				{
-					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+					new Claim(ClaimTypes.NameIdentifier, user.Id),
 					new Claim(ClaimTypes.Email, user.Email) // probably add other claims
 				}),
 				Expires = DateTime.UtcNow.AddHours(Convert.ToInt32(_configuration["Jwt:ExpirationHours"])),

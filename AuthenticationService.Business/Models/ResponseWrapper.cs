@@ -5,7 +5,6 @@ namespace AuthenticationService.Business.Models
 	{
 		public bool IsRequestSuccessful { get; set; }
 		public IEnumerable<string> Errors { get; set; }
-		public string Token { get; set; }
 		public T Data { get; set; }
 
 		public ResponseWrapper()
