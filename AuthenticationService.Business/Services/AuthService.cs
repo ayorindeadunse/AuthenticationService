@@ -74,7 +74,8 @@ namespace AuthenticationService.Business.Services
 			var result = await _signInManager.PasswordSignInAsync(loginDTO.Username, loginDTO.Password, false, lockoutOnFailure: false);
 			if (result.Succeeded)
 			{
-				var user = await _userManager.FindByNameAsync(loginDTO.Username);
+				//var user = await _userManager.FindByNameAsync(loginDTO.Username);
+				var user = await _userRepository.GetUserByUsernameAsync(loginDTO.Username);
 				// Generate token
 				var token = GenerateJwtToken(user);
 				return new ResponseWrapper<string>
