@@ -9,6 +9,7 @@ namespace AuthenticationService.Business.Services
 		Task<ResponseWrapper<string>> RegisterUserAsync(RegisterDTO registerDTO);
 		Task<ResponseWrapper<string>> LoginUserAsync(LoginDTO loginDTO);
 		ResponseWrapper<string> SocialLoginAsync(string provider, string providerToken);
+		Task<ResponseWrapper<string>> SocialRegisterAsync(string provider, string providerToken);
 	}
 }
 
