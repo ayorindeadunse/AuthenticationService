@@ -1,6 +1,8 @@
+using AuthenticationService.Business.Extensions;
 using AuthenticationService.Business.Models.DTOs;
 using AuthenticationService.Business.Services;
 using IdentityServer4.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Controllers;
@@ -16,6 +18,30 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
+    [AllowAnonymous]
+    [HttpPost("user/login")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UserLogin([FromBody] LoginDTO request)
+    {
+        var response = await _authService.Login(request);
+
+        return Ok(response);
+    }
+    
+    [AllowAnonymous]
+    [HttpPost("user/register")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UserRegister([FromBody] RegisterDTO request)
+    {
+        var response = await _authService.Register(request);
+
+        return Ok(response);
+    }
+    
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
     {
@@ -40,29 +66,21 @@ public class AuthController : ControllerBase
         return BadRequest(new { ErrorMessage = result.Errors });
     }
 
+    [AllowAnonymous]
     [HttpPost("social-login")]
-    public IActionResult SocialLogin([FromBody] SocialLoginRequest socialLoginRequest)
+    [ProducesResponseType(StatusCodes.Status200OK,Type = typeof(ResultDTO<string>))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest,Type = typeof(ResultDTO<string>))]
+    public async Task<IActionResult> SocialLogin([FromBody] SocialLoginRequest socialLoginRequest)
     {
-        var result = _authService.SocialLoginAsync(socialLoginRequest.Provider, socialLoginRequest.ProviderToken);
-
-        if (result.IsRequestSuccessful)
+        var result = await _authService.SocialLogin(socialLoginRequest);
+        var resultDTO = result.ToResultDto();
+        if (!resultDTO.IsSuccess)
         {
-            return Ok(new { Token = result.Data });
+            return BadRequest(resultDTO);
         }
 
-        return BadRequest(new { ErrorMessage = result.Errors });
-    }
-
-    [HttpPost("social-register")]
-    public async Task<IActionResult> SocialRegister([FromBody] SocialLoginRequest socialLoginRequest)
-    {
-        var result =
-            await _authService.SocialRegisterAsync(socialLoginRequest.Provider, socialLoginRequest.ProviderToken);
-        if (result.IsRequestSuccessful)
-        {
-            return Ok(new { Token = result.Data });
-        }
-
-        return BadRequest(new { ErrorMessage = result.Errors });
+        return Ok(resultDTO);
     }
 }
