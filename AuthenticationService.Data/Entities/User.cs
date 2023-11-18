@@ -9,7 +9,7 @@ namespace AuthenticationService.Data.Entities
 		// Add some documentation after deploying this service so your users know what properties they can get from this implementation
 		// or other properties that may or may not be needed in other services.
 
-		public string? ExternalLoginProvider { get; set; }
+		public string? ExternalLoginProvider { get; set; } = null;
 		public string? ExternalLoginProviderKey { get; set; }
 	}
 }
